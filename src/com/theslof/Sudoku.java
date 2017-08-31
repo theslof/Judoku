@@ -107,6 +107,18 @@ public class Sudoku {
         System.out.print('\n');
     }
 
+    boolean isValid(int cell) {
+        int row = cell / ROW_COL_BLK_SIZE;
+        int col = cell % ROW_COL_BLK_SIZE;
+        if(!checkRow(getRow(row)))
+            return false;
+        if(!checkRow(getCol(col)))
+            return false;
+        if(!checkRow(getBlock(row/GRID_SIZE,col/GRID_SIZE)))
+            return false;
+        return true;
+
+    }
     boolean isValid() {
         for (int i = 0; i < ROW_COL_BLK_SIZE; i++) {
             if (!checkRow(getRow(i))) {
@@ -152,35 +164,30 @@ public class Sudoku {
     }
 
     boolean solve() {
-        return solve(0, 0);
+        return solve(0);
     }
 
-    boolean solve(int y, int x) {
-        if (x >= ROW_COL_BLK_SIZE) {
-            x = 0;
-            y++;
-            if (y >= ROW_COL_BLK_SIZE)
-                return true;
-        }
+    boolean solve(int n) {
+        if (n >= BOARD_SIZE)
+            return true;
 
-        if (solution[y*ROW_COL_BLK_SIZE+x] != 0) {
-            return solve(y, x + 1);
-        }
+        if (solution[n] != 0)
+            return solve(n+1);
 
         MoveLog move;
-        for (int n = 1; n <= ROW_COL_BLK_SIZE; n++) {
-            solution[y*ROW_COL_BLK_SIZE+x] = n;
-            if (!isValid()) {
-                solution[y*ROW_COL_BLK_SIZE+x] = 0;
+        for (int i = 1; i <= ROW_COL_BLK_SIZE; i++) {
+            solution[n] = i;
+            if (!isValid(n)) {
+                solution[n] = 0;
                 continue;
             }
-            move = new MoveLog(x, y, n);
+            move = new MoveLog(n % ROW_COL_BLK_SIZE, n / ROW_COL_BLK_SIZE, i);
             log.add(move);
-            if (solve(y, x + 1)) {
+            if (solve(n + 1)) {
                 return true;
             } else {
                 log.remove(move);
-                solution[y*ROW_COL_BLK_SIZE+x] = 0;
+                solution[n] = 0;
             }
         }
         return false;
