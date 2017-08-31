@@ -17,7 +17,8 @@ public class Judoku {
     private static final String[] FILE_NAME = {"simple.sud", "easy.sud", "intermediate.sud", "expert.sud"};
     private static final String SUDOKU_STRING = "....482...9...28.5.5.6........87...2......679.....1..4.....7...5...9..1.7..15..6.";
     private static final ArrayList<String> examples = new ArrayList<String>();
-    private static final boolean BENCHMARK = false;
+    private static final boolean BENCHMARK = true;
+    private static final boolean BENCHMARK_RANDOM = true;
     private static final long BENCHMARK_SEED = 342212;
 
     public static void main(String[] args) {
@@ -69,14 +70,23 @@ public class Judoku {
 
     //Run through multiple sudokus and print out total and average time
     private static void benchmark(int runs, int difficulty) {
-        //Benchmarks done with 50 runs, difficulty 2:
+        //Benchmarks done with 50 runs, difficulty 2, on a MacBook Air i7:
         //Before isValid optimization: 50.578s, 1.01156s per puzzle
         //After isValid optimization: 6.446s, 0.12892s per puzzle, 87% reduction
 
+        //Benchmarks done with 100 runs, difficulty 2, on a Win7 desktop PC:
+        //Before isValid optimization: 193.7s, 1.937s per puzzle
+        //After isValid optimization: 16.739s, 0.16739s per puzzle, 91,4% reduction
+
         parseExampleFile(difficulty);
+        int size = examples.size();
+
+        if(runs > size){
+            System.out.println("Benchmark error: Number of runs is greater than puzzles parsed: " + runs + " > " + size);
+            return;
+        }
 
         Random rand = new Random(BENCHMARK_SEED);
-        int size = examples.size();
         long startTime;
         long endTime;
         Sudoku a;
@@ -84,7 +94,10 @@ public class Judoku {
         startTime = System.currentTimeMillis();
 
         for (int j = 0; j < runs; j++) {
-            a = new Sudoku(examples.get(rand.nextInt(size)));
+            if(BENCHMARK_RANDOM)
+                a = new Sudoku(examples.get(rand.nextInt(size)));
+            else
+                a = new Sudoku(examples.get(j));
             if (!a.solve()) {
                 System.out.println("This Sudoku can't be solved!");
             }
