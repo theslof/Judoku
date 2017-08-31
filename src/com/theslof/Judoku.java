@@ -1,10 +1,7 @@
-/***************
- *             *
- *   Judoku    *
- * Java Sudoku *
- *             *
- **************/
-
+//Java Sudoku
+//Solver works as intended, all that is left now is optimization.
+//Trial runs with checking for multiple solutions has a 2x negative impact on performance.
+//Solver needs a rewrite to improve performance.
 package com.theslof;
 
 import java.io.BufferedReader;
@@ -12,18 +9,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-
 public class Judoku {
     private static final String[] FILE_NAME = {"simple.sud", "easy.sud", "intermediate.sud", "expert.sud"};
-    private static final String SUDOKU_STRING = "....482...9...28.5.5.6........87...2......679.....1..4.....7...5...9..1.7..15..6.";
-    private static final ArrayList<String> examples = new ArrayList<String>();
+    private static final ArrayList<String> examples = new ArrayList<>();
     private static final boolean BENCHMARK = true;
     private static final boolean BENCHMARK_RANDOM = true;
     private static final long BENCHMARK_SEED = 342212;
+    private static final int BENCHMARK_RUNS = 100;
+    private static final int BENCHMARK_DIFFICULTY = 2;
 
     public static void main(String[] args) {
 
-        System.out.println("Judoku 0.9");
+        System.out.println("Judoku 1.0");
 
         parseExampleFile(2);
 
@@ -35,7 +32,7 @@ public class Judoku {
         System.out.println("Read " + examples.size() + " examples from file!");
 
         if (BENCHMARK)
-            benchmark(50, 2);
+            benchmark(BENCHMARK_RUNS, BENCHMARK_DIFFICULTY);
         else
             runRandomSudoku();
 
@@ -81,7 +78,7 @@ public class Judoku {
         parseExampleFile(difficulty);
         int size = examples.size();
 
-        if(runs > size){
+        if (runs > size) {
             System.out.println("Benchmark error: Number of runs is greater than puzzles parsed: " + runs + " > " + size);
             return;
         }
@@ -94,7 +91,7 @@ public class Judoku {
         startTime = System.currentTimeMillis();
 
         for (int j = 0; j < runs; j++) {
-            if(BENCHMARK_RANDOM)
+            if (BENCHMARK_RANDOM)
                 a = new Sudoku(examples.get(rand.nextInt(size)));
             else
                 a = new Sudoku(examples.get(j));

@@ -9,7 +9,6 @@ public class Sudoku {
     private int[] grid = new int[BOARD_SIZE];
     private int[] solution = new int[BOARD_SIZE];
     private Random rand = new Random();
-    private ArrayList<MoveLog> log = new ArrayList<MoveLog>();
 
     public Sudoku() {
         //Create a new, blank Sudoku
@@ -20,33 +19,13 @@ public class Sudoku {
         parseString(puzzleString);
     }
 
-    public Sudoku(Sudoku s) {
-        //Create a new Sudoku and copy values from Sudoku s
-        copy(s.getArray());
-    }
-
-    public Sudoku(int[] sud) {
-        //Create a new Sudoku and copy values from array sud
-        copy(sud);
-    }
-
-    public void copy(int[] sud) {
-        //Copy cells from Sudoku s to this Sudoku
-        int s;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            s = sud[i];
-            grid[i] = s;
-            solution[i] = s;
-        }
-    }
-
-    public int[] getArray() {
-        return solution.clone();
+    public void revert(){
+        solution = grid.clone();
     }
 
     private int[] getRow(int i) {
         int[] row = new int[ROW_COL_BLK_SIZE];
-        System.arraycopy(solution, i*ROW_COL_BLK_SIZE, row, 0, ROW_COL_BLK_SIZE);
+        System.arraycopy(solution, i * ROW_COL_BLK_SIZE, row, 0, ROW_COL_BLK_SIZE);
         return row;
     }
 
@@ -63,7 +42,7 @@ public class Sudoku {
         x *= GRID_SIZE;
         int[] s = new int[ROW_COL_BLK_SIZE];
         for (int j = 0; j < GRID_SIZE; j++) {
-            System.arraycopy(solution,(y + j) * ROW_COL_BLK_SIZE + x, s,j * GRID_SIZE, GRID_SIZE);
+            System.arraycopy(solution, (y + j) * ROW_COL_BLK_SIZE + x, s, j * GRID_SIZE, GRID_SIZE);
         }
         return s;
     }
@@ -107,15 +86,9 @@ public class Sudoku {
     private boolean isValid(int cell) {
         int row = cell / ROW_COL_BLK_SIZE;
         int col = cell % ROW_COL_BLK_SIZE;
-        if(!checkRow(getRow(row)))
-            return false;
-        if(!checkRow(getCol(col)))
-            return false;
-        if(!checkRow(getBlock(row/GRID_SIZE,col/GRID_SIZE)))
-            return false;
-        return true;
-
+        return checkRow(getRow(row)) && checkRow(getCol(col)) && checkRow(getBlock(row / GRID_SIZE, col / GRID_SIZE));
     }
+
     private boolean isValid() {
         for (int i = 0; i < ROW_COL_BLK_SIZE; i++) {
             if (!checkRow(getRow(i))) {
@@ -133,7 +106,7 @@ public class Sudoku {
     }
 
     private boolean checkRow(int[] row) {
-        Set<Integer> nums = new HashSet<Integer>();
+        Set<Integer> nums = new HashSet<>();
 
         for (int j = 0; j < ROW_COL_BLK_SIZE; j++) {
             if (row[j] != 0) {
@@ -156,43 +129,33 @@ public class Sudoku {
         return true;
     }
 
-    boolean isSolved() {
-        return (isFilled() && isValid());
-    }
-
     boolean solve() {
-        if (!solve(0))
-            return false;
-        return isValid();
+        return solve(0);
     }
 
-    boolean solve(int n) {
+    private boolean solve(int n) {
         if (n >= BOARD_SIZE)
             return true;
 
         if (solution[n] != 0)
-            return solve(n+1);
+            return solve(n + 1);
 
-        MoveLog move;
         for (int i = 1; i <= ROW_COL_BLK_SIZE; i++) {
             solution[n] = i;
             if (!isValid(n)) {
                 solution[n] = 0;
                 continue;
             }
-            move = new MoveLog(n % ROW_COL_BLK_SIZE, n / ROW_COL_BLK_SIZE, i);
-            log.add(move);
             if (solve(n + 1)) {
                 return true;
             } else {
-                log.remove(move);
                 solution[n] = 0;
             }
         }
         return false;
     }
 
-    public void parseString(String s) {
+    private void parseString(String s) {
         s = s.replace('.', '0');
         char[] c = s.toCharArray();
         grid = new int[BOARD_SIZE];
@@ -206,7 +169,7 @@ public class Sudoku {
     @Override
     public String toString() {
         StringBuilder sudoku = new StringBuilder();
-        int n = 0;
+        int n;
         char s;
 
         for (int i = 0; i < BOARD_SIZE; i++) {
