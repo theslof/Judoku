@@ -8,6 +8,7 @@ public class Sudoku {
     private static final int BOARD_SIZE = ROW_COL_BLK_SIZE * ROW_COL_BLK_SIZE;
     private int[] grid = new int[BOARD_SIZE];
     private int[] solution = new int[BOARD_SIZE];
+    private ArrayList<int[]> allSolutions = new ArrayList<int[]>();
     private Random rand = new Random();
     private ArrayList<MoveLog> log = new ArrayList<MoveLog>();
 
@@ -68,9 +69,24 @@ public class Sudoku {
         return s;
     }
 
+    public void printSolutions() {
+        if(allSolutions.size() == 0){
+            print();
+            return;
+        }
+        print(allSolutions.get(0));
+        for(int[] i : allSolutions) {
+            System.out.println(toString(i));
+        }
+    }
+
     public void print() {
+        print(solution);
+    }
+
+    public void print(int[] puzzle) {
         for (int i = 0; i < BOARD_SIZE; i++) {
-            int n = solution[i];
+            int n = puzzle[i];
             if ((i % ROW_COL_BLK_SIZE) == 0) {
                 if (i % (ROW_COL_BLK_SIZE * GRID_SIZE) == 0) {
                     System.out.print("\n+");
@@ -161,35 +177,37 @@ public class Sudoku {
     }
 
     boolean solve() {
-        if (!solve(0))
+        int n;
+        if ((n = solve(0)) == 0)
             return false;
         return isValid();
     }
 
-    boolean solve(int n) {
-        if (n >= BOARD_SIZE)
-            return true;
-
+    int solve(int n) {
+        int solutions = 0;
+        if (n >= BOARD_SIZE) {
+            allSolutions.add(solution.clone());
+            return 1;
+        }
         if (solution[n] != 0)
-            return solve(n+1);
+            return solutions + solve(n+1);
 
-        MoveLog move;
         for (int i = 1; i <= ROW_COL_BLK_SIZE; i++) {
             solution[n] = i;
             if (!isValid(n)) {
                 solution[n] = 0;
                 continue;
             }
-            move = new MoveLog(n % ROW_COL_BLK_SIZE, n / ROW_COL_BLK_SIZE, i);
-            log.add(move);
-            if (solve(n + 1)) {
-                return true;
+            int s;
+            if ((s = solve(n + 1)) > 0) {
+                solutions += s;
+                continue;
             } else {
-                log.remove(move);
                 solution[n] = 0;
             }
         }
-        return false;
+        solution[n] = 0;
+        return solutions;
     }
 
     public void parseString(String s) {
@@ -205,12 +223,15 @@ public class Sudoku {
 
     @Override
     public String toString() {
+        return toString(solution);
+    }
+    private String toString(int[] puzzle) {
         StringBuilder sudoku = new StringBuilder();
         int n = 0;
         char s;
 
         for (int i = 0; i < BOARD_SIZE; i++) {
-            n = solution[i];
+            n = puzzle[i];
             switch (n) {
                 case 0:
                     s = '.';
@@ -224,4 +245,5 @@ public class Sudoku {
 
         return sudoku.toString();
     }
+
 }

@@ -15,7 +15,8 @@ import java.util.*;
 
 public class Judoku {
     private static final String[] FILE_NAME = {"simple.sud", "easy.sud", "intermediate.sud", "expert.sud"};
-    private static final String SUDOKU_STRING = "....482...9...28.5.5.6........87...2......679.....1..4.....7...5...9..1.7..15..6.";
+    private static final String UNSOLVABLE_SUDOKU_STRING = "5168497323.76.5...8.97...65135.6.9.7472591..696837..5.253186.746842.75..791.5.6.8";
+    private static final String SUDOKU_STRING = ".8...9743.5...8.1..1.......8....5......8.4......3....6.......7..3.5...8.9724...5.";
     private static final ArrayList<String> examples = new ArrayList<String>();
     private static final boolean BENCHMARK = true;
     private static final boolean BENCHMARK_RANDOM = true;
@@ -35,7 +36,7 @@ public class Judoku {
         System.out.println("Read " + examples.size() + " examples from file!");
 
         if (BENCHMARK)
-            benchmark(50, 2);
+            benchmark(100, 2);
         else
             runRandomSudoku();
 
@@ -117,6 +118,7 @@ public class Judoku {
         int i = rand.nextInt(size);
 
         a = new Sudoku(examples.get(i));
+//        a = new Sudoku(SUDOKU_STRING);
 
         a.print();
         System.out.println(a);
@@ -125,8 +127,7 @@ public class Judoku {
             System.out.println("This Sudoku can't be solved!");
         } else {
             endTime = System.currentTimeMillis();
-            a.print();
-            System.out.println(a);
+            a.printSolutions();
             System.out.println("This sudoku took " + (endTime - startTime) / 1000.0 + "s to solve!");
         }
     }
