@@ -46,9 +46,7 @@ public class Sudoku {
 
     private int[] getRow(int i) {
         int[] row = new int[ROW_COL_BLK_SIZE];
-        for (int n = 0; n < ROW_COL_BLK_SIZE; n++) {
-            row[n] = solution[i * ROW_COL_BLK_SIZE + n];
-        }
+        System.arraycopy(solution, i*ROW_COL_BLK_SIZE, row, 0, ROW_COL_BLK_SIZE);
         return row;
     }
 
@@ -64,9 +62,8 @@ public class Sudoku {
         y *= GRID_SIZE;
         x *= GRID_SIZE;
         int[] s = new int[ROW_COL_BLK_SIZE];
-        for (int i = 0; i < ROW_COL_BLK_SIZE; i++) {
-            s[i] = solution[(y + (i / GRID_SIZE)) * ROW_COL_BLK_SIZE + x + (i % GRID_SIZE)];
-
+        for (int j = 0; j < GRID_SIZE; j++) {
+            System.arraycopy(solution,(y + j) * ROW_COL_BLK_SIZE + x, s,j * GRID_SIZE, GRID_SIZE);
         }
         return s;
     }
@@ -107,7 +104,7 @@ public class Sudoku {
         System.out.print('\n');
     }
 
-    boolean isValid(int cell) {
+    private boolean isValid(int cell) {
         int row = cell / ROW_COL_BLK_SIZE;
         int col = cell % ROW_COL_BLK_SIZE;
         if(!checkRow(getRow(row)))
@@ -119,7 +116,7 @@ public class Sudoku {
         return true;
 
     }
-    boolean isValid() {
+    private boolean isValid() {
         for (int i = 0; i < ROW_COL_BLK_SIZE; i++) {
             if (!checkRow(getRow(i))) {
                 return false;
@@ -135,7 +132,7 @@ public class Sudoku {
         return true;
     }
 
-    boolean checkRow(int[] row) {
+    private boolean checkRow(int[] row) {
         Set<Integer> nums = new HashSet<Integer>();
 
         for (int j = 0; j < ROW_COL_BLK_SIZE; j++) {
@@ -151,7 +148,7 @@ public class Sudoku {
         return true;
     }
 
-    boolean isFilled() {
+    private boolean isFilled() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (solution[i] == 0)
                 return false;
@@ -164,7 +161,9 @@ public class Sudoku {
     }
 
     boolean solve() {
-        return solve(0);
+        if (!solve(0))
+            return false;
+        return isValid();
     }
 
     boolean solve(int n) {
@@ -193,14 +192,15 @@ public class Sudoku {
         return false;
     }
 
-    public static int[][] parseString(String s) {
+    public void parseString(String s) {
         s = s.replace('.', '0');
         char[] c = s.toCharArray();
-        int[][] i = new int[ROW_COL_BLK_SIZE][ROW_COL_BLK_SIZE];
-        for (int j = 0; j < BOARD_SIZE && j < c.length; j++) {
-            i[j / ROW_COL_BLK_SIZE][j % ROW_COL_BLK_SIZE] = (int) c[j] - '0';
+        grid = new int[BOARD_SIZE];
+        solution = new int[BOARD_SIZE];
+        for (int i = 0; i < BOARD_SIZE && i < c.length; i++) {
+            grid[i] = (int) c[i] - '0';
+            solution[i] = (int) c[i] - '0';
         }
-        return i;
     }
 
     @Override

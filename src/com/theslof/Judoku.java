@@ -1,4 +1,4 @@
-/**************
+/***************
  *             *
  *   Judoku    *
  * Java Sudoku *
@@ -20,7 +20,7 @@ public class Judoku {
 
     public static void main(String[] args) {
 
-        System.out.println("Judoku 0.1");
+        System.out.println("Judoku 0.9");
 
         FileReader file = null;
         BufferedReader buffer = null;
@@ -56,7 +56,7 @@ public class Judoku {
         Random rand = new Random();
         int i = rand.nextInt(examples.size());
 
-        Sudoku a = new Sudoku(new Sudoku(examples.get(i)));
+        Sudoku a = new Sudoku(examples.get(i));
 
         a.print();
         System.out.println(a);
