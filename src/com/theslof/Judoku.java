@@ -12,7 +12,7 @@ import java.util.*;
 public class Judoku {
     private static final String[] FILE_NAME = {"simple.sud", "easy.sud", "intermediate.sud", "expert.sud"};
     private static final ArrayList<String> examples = new ArrayList<>();
-    private static final boolean BENCHMARK = true;
+    private static final boolean BENCHMARK = false;
     private static final boolean BENCHMARK_RANDOM = true;
     private static final long BENCHMARK_SEED = 342212;
     private static final int BENCHMARK_RUNS = 100;
@@ -35,7 +35,6 @@ public class Judoku {
             benchmark(BENCHMARK_RUNS, BENCHMARK_DIFFICULTY);
         else
             runRandomSudoku();
-
     }
 
     private static void parseExampleFile(int difficulty) {

@@ -3,19 +3,37 @@ package com.theslof;
 import java.util.*;
 
 public class Sudoku {
-    private static final int GRID_SIZE = 3;
-    private static final int ROW_COL_BLK_SIZE = GRID_SIZE * GRID_SIZE;
-    private static final int BOARD_SIZE = ROW_COL_BLK_SIZE * ROW_COL_BLK_SIZE;
-    private int[] grid = new int[BOARD_SIZE];
-    private int[] solution = new int[BOARD_SIZE];
+    private final int GRID_SIZE;
+    private final int ROW_COL_BLK_SIZE;
+    private final int BOARD_SIZE;
+    private int[] grid;
+    private int[] solution;
     private Random rand = new Random();
 
     public Sudoku() {
-        //Create a new, blank Sudoku
+        GRID_SIZE = 3;
+        ROW_COL_BLK_SIZE = GRID_SIZE * GRID_SIZE;
+        BOARD_SIZE = ROW_COL_BLK_SIZE * ROW_COL_BLK_SIZE;
+        grid = new int[BOARD_SIZE];
+        solution = new int[BOARD_SIZE];
+    }
+
+    public Sudoku(int n) {
+        GRID_SIZE = n;
+        ROW_COL_BLK_SIZE = GRID_SIZE * GRID_SIZE;
+        BOARD_SIZE = ROW_COL_BLK_SIZE * ROW_COL_BLK_SIZE;
+        grid = new int[BOARD_SIZE];
+        solution = new int[BOARD_SIZE];
     }
 
     public Sudoku(String puzzleString) {
-        //Create a Sudoku from a string
+        double row = Math.sqrt(puzzleString.length());
+        int size = (int)Math.sqrt(row);
+        GRID_SIZE = size;
+        ROW_COL_BLK_SIZE = GRID_SIZE * GRID_SIZE;
+        BOARD_SIZE = ROW_COL_BLK_SIZE * ROW_COL_BLK_SIZE;
+        grid = new int[BOARD_SIZE];
+        solution = new int[BOARD_SIZE];
         parseString(puzzleString);
     }
 
@@ -129,7 +147,7 @@ public class Sudoku {
         return true;
     }
 
-    boolean solve() {
+    public boolean solve() {
         return solve(0);
     }
 
