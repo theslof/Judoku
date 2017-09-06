@@ -11,11 +11,7 @@ public class Sudoku {
     private Random rand = new Random();
 
     public Sudoku() {
-        GRID_SIZE = 3;
-        ROW_COL_BLK_SIZE = GRID_SIZE * GRID_SIZE;
-        BOARD_SIZE = ROW_COL_BLK_SIZE * ROW_COL_BLK_SIZE;
-        grid = new int[BOARD_SIZE];
-        solution = new int[BOARD_SIZE];
+        this(3);
     }
 
     public Sudoku(int n) {
@@ -26,43 +22,17 @@ public class Sudoku {
         solution = new int[BOARD_SIZE];
     }
 
-    public Sudoku(String puzzleString) {
-        double row = Math.sqrt(puzzleString.length());
-        int size = (int)Math.sqrt(row);
-        GRID_SIZE = size;
-        ROW_COL_BLK_SIZE = GRID_SIZE * GRID_SIZE;
-        BOARD_SIZE = ROW_COL_BLK_SIZE * ROW_COL_BLK_SIZE;
-        grid = new int[BOARD_SIZE];
-        solution = new int[BOARD_SIZE];
+    public Sudoku(int n, String puzzleString) {
+        this(n);
         parseString(puzzleString);
+    }
+
+    public boolean solve() {
+        return solve(0);
     }
 
     public void revert(){
         solution = grid.clone();
-    }
-
-    private int[] getRow(int i) {
-        int[] row = new int[ROW_COL_BLK_SIZE];
-        System.arraycopy(solution, i * ROW_COL_BLK_SIZE, row, 0, ROW_COL_BLK_SIZE);
-        return row;
-    }
-
-    private int[] getCol(int i) {
-        int[] s = new int[ROW_COL_BLK_SIZE];
-        for (int n = 0; n < ROW_COL_BLK_SIZE; n++) {
-            s[n] = solution[n * ROW_COL_BLK_SIZE + i];
-        }
-        return s;
-    }
-
-    private int[] getBlock(int y, int x) {
-        y *= GRID_SIZE;
-        x *= GRID_SIZE;
-        int[] s = new int[ROW_COL_BLK_SIZE];
-        for (int j = 0; j < GRID_SIZE; j++) {
-            System.arraycopy(solution, (y + j) * ROW_COL_BLK_SIZE + x, s, j * GRID_SIZE, GRID_SIZE);
-        }
-        return s;
     }
 
     public void print() {
@@ -99,6 +69,52 @@ public class Sudoku {
         }
         System.out.print("+");
         System.out.print('\n');
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sudoku = new StringBuilder();
+        int n;
+        char s;
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            n = solution[i];
+            switch (n) {
+                case 0:
+                    s = '.';
+                    break;
+                default:
+                    s = (char) (n + '0');
+                    break;
+            }
+            sudoku.append(s);
+        }
+
+        return sudoku.toString();
+    }
+
+    private int[] getRow(int i) {
+        int[] row = new int[ROW_COL_BLK_SIZE];
+        System.arraycopy(solution, i * ROW_COL_BLK_SIZE, row, 0, ROW_COL_BLK_SIZE);
+        return row;
+    }
+
+    private int[] getCol(int i) {
+        int[] s = new int[ROW_COL_BLK_SIZE];
+        for (int n = 0; n < ROW_COL_BLK_SIZE; n++) {
+            s[n] = solution[n * ROW_COL_BLK_SIZE + i];
+        }
+        return s;
+    }
+
+    private int[] getBlock(int y, int x) {
+        y *= GRID_SIZE;
+        x *= GRID_SIZE;
+        int[] s = new int[ROW_COL_BLK_SIZE];
+        for (int j = 0; j < GRID_SIZE; j++) {
+            System.arraycopy(solution, (y + j) * ROW_COL_BLK_SIZE + x, s, j * GRID_SIZE, GRID_SIZE);
+        }
+        return s;
     }
 
     private boolean isValid(int cell) {
@@ -147,10 +163,6 @@ public class Sudoku {
         return true;
     }
 
-    public boolean solve() {
-        return solve(0);
-    }
-
     private boolean solve(int n) {
         if (n >= BOARD_SIZE)
             return true;
@@ -182,27 +194,5 @@ public class Sudoku {
             grid[i] = (int) c[i] - '0';
             solution[i] = (int) c[i] - '0';
         }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sudoku = new StringBuilder();
-        int n;
-        char s;
-
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            n = solution[i];
-            switch (n) {
-                case 0:
-                    s = '.';
-                    break;
-                default:
-                    s = (char) (n + '0');
-                    break;
-            }
-            sudoku.append(s);
-        }
-
-        return sudoku.toString();
     }
 }

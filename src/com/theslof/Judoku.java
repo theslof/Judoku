@@ -17,6 +17,7 @@ public class Judoku {
     private static final long BENCHMARK_SEED = 342212;
     private static final int BENCHMARK_RUNS = 100;
     private static final int BENCHMARK_DIFFICULTY = 2;
+    private static final int DEFAULT_SIZE = 3;
 
     public static void main(String[] args) {
 
@@ -91,9 +92,9 @@ public class Judoku {
 
         for (int j = 0; j < runs; j++) {
             if (BENCHMARK_RANDOM)
-                a = new Sudoku(examples.get(rand.nextInt(size)));
+                a = new Sudoku(DEFAULT_SIZE, examples.get(rand.nextInt(size)));
             else
-                a = new Sudoku(examples.get(j));
+                a = new Sudoku(DEFAULT_SIZE, examples.get(j));
             if (!a.solve()) {
                 System.out.println("This Sudoku can't be solved!");
             }
@@ -112,7 +113,7 @@ public class Judoku {
 
         int i = rand.nextInt(size);
 
-        a = new Sudoku(examples.get(i));
+        a = new Sudoku(DEFAULT_SIZE, examples.get(i));
 
         a.print();
         System.out.println(a);
